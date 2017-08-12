@@ -46,7 +46,7 @@
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
-            this.button13 = new System.Windows.Forms.Button();
+            this.empty = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -233,20 +233,20 @@
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.doClick);
             // 
-            // button13
+            // empty
             // 
-            this.button13.Location = new System.Drawing.Point(198, 195);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(56, 43);
-            this.button13.TabIndex = 20;
-            this.button13.Tag = "";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Visible = false;
-            this.button13.Click += new System.EventHandler(this.doClick);
+            this.empty.Location = new System.Drawing.Point(198, 195);
+            this.empty.Name = "empty";
+            this.empty.Size = new System.Drawing.Size(56, 43);
+            this.empty.TabIndex = 20;
+            this.empty.Tag = "";
+            this.empty.UseVisualStyleBackColor = true;
+            this.empty.Visible = false;
+            this.empty.Click += new System.EventHandler(this.doClick);
             // 
             // timer1
             // 
-            this.timer1.Enabled = true;
+            this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
@@ -254,7 +254,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(265, 250);
-            this.Controls.Add(this.button13);
+            this.Controls.Add(this.empty);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button18);
@@ -301,7 +301,7 @@
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button button13;
+        private System.Windows.Forms.Button empty;
         private System.Windows.Forms.Timer timer1;
     }
 }

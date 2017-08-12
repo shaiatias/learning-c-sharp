@@ -350,6 +350,9 @@ namespace week1_q2
             animateToPoint = empty.Location;
             buttonToAnimate = original;
 
+            isDuringAnimation = true;
+            timer1.Enabled = true;
+
             empty.Location = original.Location;
         }
 
@@ -368,7 +371,7 @@ namespace week1_q2
 
             if (buttonToAnimate.Location.X != animateToPoint.X)
             {
-                int x = (buttonToAnimate.Location.X > animateToPoint.X) ?
+                int x = (buttonToAnimate.Location.X < animateToPoint.X) ?
                         buttonToAnimate.Location.X + 1 :
                         buttonToAnimate.Location.X - 1 ;
 
@@ -376,7 +379,7 @@ namespace week1_q2
             }
             else if (buttonToAnimate.Location.Y != animateToPoint.Y)
             {
-                int y = (buttonToAnimate.Location.Y > animateToPoint.Y) ?
+                int y = (buttonToAnimate.Location.Y < animateToPoint.Y) ?
                         buttonToAnimate.Location.Y + 1 :
                         buttonToAnimate.Location.Y - 1;
 
@@ -385,6 +388,7 @@ namespace week1_q2
             else
             {
                 isDuringAnimation = false;
+                this.timer1.Enabled = false;
             }
 
             buttonToAnimate.Location = p;
