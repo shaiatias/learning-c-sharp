@@ -48,10 +48,23 @@ namespace week1
                 else
                 {
                     numsIt.MoveNext();
+
                     b.Text = numsIt.Current.ToString();
                     b.Visible = true;
+                    b.BackColor = getRandomBackgroundColor(b);
                 }
             }
+        }
+
+        private static Color getRandomBackgroundColor(Object seed)
+        {
+            Random rnd = new Random(seed.GetHashCode() + DateTime.Now.Millisecond);
+
+            int r = rnd.Next(255);
+            int g = rnd.Next(255);
+            int b = rnd.Next(255);
+
+            return Color.FromArgb(r,g,b);
         }
 
         private IEnumerable<Button> getAllButtons()
