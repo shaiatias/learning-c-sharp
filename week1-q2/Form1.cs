@@ -251,7 +251,17 @@ namespace week1_q2
 
         private bool didLose()
         {
-            return false;
+            if (textToButton["15"].Location.ToString() ==   // 15 in 14
+                textToButton["14"].Tag.ToString() &&        // and
+                textToButton["14"].Location.ToString() ==   // 14 in 15
+                textToButton["15"].Tag.ToString())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void afterTurn()

@@ -129,7 +129,12 @@ namespace week1
 
         private bool didLose()
         {
-            return false;
+
+            if (tagToButton["15"].ToString() == "14" && tagToButton["14"].ToString() == "15") 
+                return true;
+
+            else
+                return false;
         }
 
         private void afterTurn()
