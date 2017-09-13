@@ -101,14 +101,14 @@ namespace week2_q1
 
         private void onCounterChanged(int value)
         {
-            countLabel.Text = value.ToString();
+            remaining = value;
 
             comboBox1.Items.Clear();
             pencils.Clear();
 
-            for (int i = 1; i < Counter + 1; i++)
+            for (int i = 0; i < remaining; i++)
             {
-                comboBox1.Items.Add(i);
+                comboBox1.Items.Add(i + 1);
                 pencils.Add(PencilColor.GREY);
             }
 
@@ -117,11 +117,29 @@ namespace week2_q1
 
         private void repaintPencils()
         {
-            // clear pencils
+            flowLayoutPanel1.Controls.Clear();
 
             pencils.ForEach((pen) =>
             {
-                // repaint pencils
+                PictureBox box = new PictureBox();
+                box.Size = new Size(100, 18);
+
+                switch (pen)
+                {
+                    case PencilColor.GREY:
+                        box.Image = Properties.Resources.GrayPen;
+                        break;
+                    case PencilColor.BLUE:
+                        box.Image = Properties.Resources.BluePen;
+                        break;
+                    case PencilColor.RED:
+                        box.Image = Properties.Resources.RedPen;
+                        break;
+                    default:
+                        break;
+                }
+
+                flowLayoutPanel1.Controls.Add(box);
             });
         }
 
@@ -138,6 +156,8 @@ namespace week2_q1
             }
         }
 
+        public int remaining = 0;
+
         private void onPencilsToRemoveChanged(int value)
         {
             for (int i = 0, j = 0; j < value; i++)
@@ -151,12 +171,30 @@ namespace week2_q1
 
             repaintPencils();
 
+            remaining = remaining - value;
+
+            comboBox1.Items.Clear();
+
+            for (int i = 1; i < remaining; i++)
+            {
+                comboBox1.Items.Add(i);
+            }
+
             _pencilsToRemove = 0;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+            int selectedValue = 0;
+
+            if (comboBox1.SelectedItem == null && Int32.TryParse(comboBox1.SelectedItem.ToString(), out selectedValue))
+            {
+                return;
+            }
+
+            CounterSelectionArgs args = new CounterSelectionArgs(Int32.Parse(comboBox1.SelectedItem.ToString()));
+
+            OnCounterSelectionChangedEvent?.Invoke(this, args);
         }
     }
 

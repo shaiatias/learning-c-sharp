@@ -15,6 +15,8 @@ namespace week2_q1
         bool isOpponentHuman = true;
         Player currentPlayer = Player.BLUE;
         int columns = 2;
+        private int myNextActionCounter;
+        private PencilColumn myNextActionControl;
 
         public Form1()
         {
@@ -82,6 +84,20 @@ namespace week2_q1
                     ((PencilColumn)item).CurrentPlayer = currentPlayer;
                 }
             });
+
+            button1.BackColor = currentPlayer == Player.BLUE ? Color.Blue : Color.Red;
+
+            if (currentPlayer == Player.RED && !isOpponentHuman)
+            {
+                button1.Image = Properties.Resources.Computer.ToBitmap();
+            }
+            else
+            {
+                button1.Image = null;
+            }
+
+            myNextActionControl = null;
+            myNextActionCounter = 0;
         }
 
         private void afterStep()
@@ -89,11 +105,13 @@ namespace week2_q1
             if (didWin())
             {
                 // print message
-
-                // ask user to to reset
+                printCompleteMessage();
 
                 // stop getting new actions
-                Controls.OfType<Control>().ToList().ForEach((item) => {
+                button1.Enabled = false;
+                button1.BackColor = Color.Gray;
+
+                flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) => {
                     
                     if (item is PencilColumn)
                     {
@@ -102,12 +120,36 @@ namespace week2_q1
                 });
             }
 
-            setNextPlayer(getNextPlayer());
-
-            if (currentPlayer == Player.RED && !isOpponentHuman)
+            else
             {
-                simulateNextStep();
-                afterStep();
+                flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
+                {
+                    if (item is PencilColumn)
+                    {
+                        ((PencilColumn)item).IsEnabled = true;
+                    }
+                });
+
+                setNextPlayer(getNextPlayer());
+            }
+        }
+
+        private void printCompleteMessage()
+        {
+            
+            if (currentPlayer == Player.BLUE)
+            {
+                MessageBox.Show("Blue Player Won", "Yehh! The blue player won!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            else if (isOpponentHuman)
+            {
+                MessageBox.Show("Red Player Won", "Yehh! The red player won!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            else
+            {
+                MessageBox.Show("You Lost", "The computer won!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -143,19 +185,64 @@ namespace week2_q1
 
                 PencilColumn pencil = new PencilColumn()
                 {
-                    Counter = value,
-                    Size = new Size(100, 170)
+                    Counter = value
                 };
-                
+
+                pencil.OnCounterSelectionChangedEvent += new PencilColumn.CounterSelectionChangedHandler(onCounterChanged);
+
                 flowLayoutPanel1.Controls.Add(pencil);
             }
 
-            this.Size = new Size((columns * 106) + 48, this.Size.Height);
+            button1.Enabled = true;
+        }
+
+        private void onCounterChanged(object sender, CounterSelectionArgs e)
+        {
+            myNextActionCounter = e.Counter;
+            myNextActionControl = (PencilColumn)sender;
+
+            flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
+            {
+                if (item is PencilColumn)
+                {
+                    ((PencilColumn)item).IsEnabled = false;
+                }
+            });
         }
 
         private void simulateNextStep()
         {
-            //throw new NotImplementedException();
+            PencilColumn removeColumn = null;
+            int removeCount = 0;
+
+            bool canWin = true;
+
+            flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
+            {
+                if (item is PencilColumn)
+                {
+                    canWin = canWin != (((PencilColumn)item).remaining == 0);
+                }
+            });
+
+            
+                flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
+                {
+                    if (item is PencilColumn)
+                    {
+                        if (((PencilColumn)item).remaining != 0)
+                        {
+                            removeColumn = (PencilColumn) item;
+                            removeCount = ((PencilColumn)item).remaining;
+                        }
+                    }
+                });
+
+
+            myNextActionControl = removeColumn;
+            myNextActionCounter = removeCount;
+
+            doUserStep();
         }
 
         private bool didWin()
@@ -165,11 +252,38 @@ namespace week2_q1
             flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
             {
                 if (item is PencilColumn) {
-                    left = left + ((PencilColumn)item).Counter;
+                    left = left + ((PencilColumn)item).remaining;
                 }
             });
 
             return left == 0;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (currentPlayer == Player.RED && !isOpponentHuman)
+            {
+                simulateNextStep();
+            }
+
+            else
+            {
+                doUserStep();
+            }
+
+            afterStep();
+        }
+
+        private void doUserStep()
+        {
+            if (myNextActionControl == null)
+            {
+                return;
+            }
+
+            myNextActionControl.PencilsToRemove = myNextActionCounter;
+
+            afterStep();
         }
     }
 }
