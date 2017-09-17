@@ -79,6 +79,7 @@ namespace week2_q1
         #endregion
 
         public delegate void CounterSelectionChangedHandler(object sender, CounterSelectionArgs e);
+
         public event CounterSelectionChangedHandler OnCounterSelectionChangedEvent;
 
         public PencilColumn()
