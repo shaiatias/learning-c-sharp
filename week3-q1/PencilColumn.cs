@@ -14,12 +14,18 @@ namespace week3_q1
     public partial class PencilColumn : UserControl
     {
         public AutoResetEvent blueReset = new AutoResetEvent(true);
-        public AutoResetEvent redReset = new AutoResetEvent(false);
+        public AutoResetEvent redReset = new AutoResetEvent(true);
         Thread turns;
 
-        public PencilColumn(int columns)
+        List<PencilColor> pencils;
+        int availablePencils;
+        int lastXorResult;
+
+        public PencilColumn(int pencils)
         {
             InitializeComponent();
+
+            resetColumns(pencils);
 
             turns = new Thread(StartThread);
             turns.Start();
@@ -27,41 +33,100 @@ namespace week3_q1
 
         public void resetColumns(int numOfPencils)
         {
+            availablePencils = numOfPencils;
+            pencils = new List<PencilColor>(numOfPencils);
 
+            for (int i = 0; i < numOfPencils; i++)
+            {
+                pencils.Add(PencilColor.GREY);
+            }
+
+            repaintPencils();
         }
 
-        public void paintPencils(int pencilsToPaint)
+        private void repaintPencils()
         {
+            flowLayoutPanel1.Controls.Clear();
 
+            foreach (PencilColor color in pencils)
+            {
+                PictureBox picture = new PictureBox()
+                {
+                    BackgroundImage = Properties.Resources.GrayPen
+                };
+
+                if (color == PencilColor.BLUE)
+                {
+                    picture.BackgroundImage = Properties.Resources.BluePen;
+                }
+                else if (color == PencilColor.RED)
+                {
+                    picture.BackgroundImage = Properties.Resources.RedPen;
+                }
+
+                flowLayoutPanel1.Controls.Add(picture);
+            }
+        }
+
+        public void paintPencils(int pencilsToPaint, Player player)
+        {
+            int i = 0;
+
+            for (i = 0; i < pencils.Count; i++)
+            {
+                if (pencils[i] == PencilColor.GREY)
+                {
+                    break;
+                }
+            }
+
+            for (int j = 0; j < pencilsToPaint; j++)
+            {
+                pencils[i + j] = player == Player.BLUE ? PencilColor.BLUE : PencilColor.RED;
+            }
+
+            availablePencils = availablePencils - pencilsToPaint;
         }
 
         public int getAvailablePencils()
         {
-            return 0;
+            return availablePencils;
         }
 
         public int getXorResult()
         {
-            return -1;
+            return lastXorResult;
         }
 
         public void StartThread()
         {
-
             while (getAvailablePencils() > 0)
             {
                 blueReset.WaitOne();
 
                 // do blue step
-                // calc xor value
-                //this.xorResult = value;
+                lastXorResult = calcXorValues();
+
+                Thread.Sleep(1000);
+
+                blueReset.Set();
+
+                Thread.Sleep(1000);
 
                 redReset.WaitOne();
 
                 // do red step
-                // calc xor value
-                //this.xorResult = value -1 / > 0;
+                lastXorResult = calcXorValues();
+
+                Thread.Sleep(1000);
+
+                redReset.Set();
             }
+        }
+
+        int calcXorValues()
+        {
+            return -1;
         }
 
         static int calcXorValues(List<int> nums) {
@@ -86,7 +151,7 @@ namespace week3_q1
         }
     }
 
-    enum PencilColor
+    public enum PencilColor
     {
         GREY,
         BLUE,

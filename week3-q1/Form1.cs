@@ -13,6 +13,8 @@ namespace week3_q1
 {
     public partial class Form1 : Form
     {
+        Random random = new Random();
+
         Player currentPlayer = Player.BLUE;
         int columns = 2;
 
@@ -41,6 +43,9 @@ namespace week3_q1
             resetBoard();
 
             setNextPlayer(Player.BLUE);
+
+            new Thread(gameLoop).Start();
+            //gameLoop();
         }
 
         private Player getNextPlayer()
@@ -57,54 +62,8 @@ namespace week3_q1
 
         private void setNextPlayer(Player player)
         {
-            
-        }
-
-        private void afterStep()
-        {
-            if (didWin())
-            {
-                // print message
-                printCompleteMessage();
-
-                // stop getting new actions
-                button1.Enabled = false;
-                button1.BackColor = Color.Gray;
-
-                flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) => {
-                    
-                    if (item is PencilColumn)
-                    {
-                    }
-                });
-            }
-
-            else
-            {
-                flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
-                {
-                    if (item is PencilColumn)
-                    {
-                    }
-                });
-
-                setNextPlayer(getNextPlayer());
-            }
-        }
-
-        private void printCompleteMessage()
-        {
-            
-            if (currentPlayer == Player.BLUE)
-            {
-                MessageBox.Show("Blue Player Won", "Yehh! The blue player won!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
-            else
-            {
-                MessageBox.Show("You Lost", "The computer won!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
+            currentPlayer = player;
+        }       
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
@@ -130,11 +89,9 @@ namespace week3_q1
                 }
             });
 
-            Random rand = new Random();
-
             for (int i = 0; i < columns; i++)
             {
-                int value = rand.Next(11) + 1;
+                int value = random.Next(11) + 1;
 
                 PencilColumn pencil = new PencilColumn(value);
                 flowLayoutPanel1.Controls.Add(pencil);
@@ -167,23 +124,47 @@ namespace week3_q1
             finishGame();
         }
 
+        private void finishGame()
+        {
+            DialogResult result;
+
+            if (currentPlayer == Player.BLUE)
+            {
+                result = MessageBox.Show("Blue Player Won", "Start new game?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            }
+
+            else
+            {
+                result = MessageBox.Show("Red Player Won", "Start new game?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            }
+
+            if (result == DialogResult.Yes)
+            {
+                startNewGame();
+            }
+
+            else
+            {
+                Application.Exit();
+            }
+        }
+
         private void doNextStep(PencilColumn nextColumn)
         {
             int pencilsToPaint = nextColumn.getXorResult();
 
             if (pencilsToPaint == -1)
             {
-                pencilsToPaint;// = // random on get avaliable
+                pencilsToPaint = random.Next(nextColumn.getAvailablePencils());
             }
 
-            nextColumn.paintPencils(pencilsToPaint);
+            nextColumn.paintPencils(pencilsToPaint, currentPlayer);
         }
 
         private PencilColumn getNextStep()
         {
             foreach (PencilColumn p in getPencilColumns())
             {
-
                 if (currentPlayer == Player.BLUE)
                 {
                     p.redReset.WaitOne();
@@ -206,6 +187,41 @@ namespace week3_q1
             }
 
             return preferred;
+        }
+
+        private PencilColumn getPreferredColumn()
+        {
+            foreach (PencilColumn column in getPencilColumns())
+            {
+                if (column.getXorResult() != -1)
+                {
+                    return column;
+                }
+            }
+
+            return getRandomColumn();
+        }
+
+        private List<PencilColumn> getPencilColumns()
+        {
+            List<PencilColumn> list = new List<PencilColumn>();
+
+            foreach (Control control in flowLayoutPanel1.Controls)
+            {
+                if (control is PencilColumn)
+                {
+                    list.Add((PencilColumn)control);
+                }
+            }
+
+            return list;
+        }
+
+        private PencilColumn getRandomColumn()
+        {
+            int randomColumnIndex = random.Next(this.columns);
+
+            return this.getPencilColumns()[randomColumnIndex];
         }
     }
 }
