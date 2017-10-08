@@ -63,11 +63,11 @@ namespace week3_q1
         private void setNextPlayer(Player player)
         {
             currentPlayer = player;
-        }       
+        }
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem c = (ToolStripMenuItem) sender;
+            ToolStripMenuItem c = (ToolStripMenuItem)sender;
 
             columnsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>().ToList().ForEach((item) => { item.Checked = false; });
             c.Checked = true;
@@ -80,7 +80,8 @@ namespace week3_q1
 
         private void resetBoard()
         {
-            flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) => {
+            flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
+            {
 
                 if (item is PencilColumn)
                 {
@@ -104,7 +105,8 @@ namespace week3_q1
 
             flowLayoutPanel1.Controls.OfType<Control>().ToList().ForEach((item) =>
             {
-                if (item is PencilColumn) {
+                if (item is PencilColumn)
+                {
                     left = left + ((PencilColumn)item).getAvailablePencils();
                 }
             });
@@ -165,16 +167,19 @@ namespace week3_q1
         {
             foreach (PencilColumn p in getPencilColumns())
             {
-                if (currentPlayer == Player.BLUE)
-                {
-                    p.redReset.WaitOne();
-                    p.blueReset.Set();
-                }
-                else
-                {
-                    p.blueReset.WaitOne();
-                    p.redReset.Set();
-                }
+                p.blueReset.Set();
+                p.redReset.WaitOne();
+
+                //if (currentPlayer == Player.BLUE)
+                //{
+                //    p.redReset.WaitOne();
+                //    p.blueReset.Set();
+                //}
+                //else
+                //{
+                //    p.blueReset.WaitOne();
+                //    p.redReset.Set();
+                //}
             }
 
             Thread.Sleep(250);

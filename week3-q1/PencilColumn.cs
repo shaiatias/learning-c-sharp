@@ -13,8 +13,8 @@ namespace week3_q1
 {
     public partial class PencilColumn : UserControl
     {
-        public AutoResetEvent blueReset = new AutoResetEvent(true);
-        public AutoResetEvent redReset = new AutoResetEvent(true);
+        public AutoResetEvent blueReset = new AutoResetEvent(false);
+        public AutoResetEvent redReset = new AutoResetEvent(false);
         Thread turns;
 
         List<PencilColor> pencils;
@@ -107,18 +107,18 @@ namespace week3_q1
                 // do blue step
                 lastXorResult = calcXorValues();
 
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
 
-                blueReset.Set();
+                //blueReset.Set();
 
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
 
-                redReset.WaitOne();
+                //redReset.WaitOne();
 
-                // do red step
-                lastXorResult = calcXorValues();
+                //// do red step
+                //lastXorResult = calcXorValues();
 
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
 
                 redReset.Set();
             }
