@@ -40,15 +40,14 @@ namespace Server
     class ServerPart : MarshalByRefObject, IGameServer
     {
         private GameState gameStateOnServer;
-        public event delegateFromServer_StateUpdate fromServer_StateUpdateEvent;
 
         public ServerPart()
         {
-            startNewGame();
-        }        
+            startNewGame(7);
+        }
 
         [OneWay]
-        public void connectToServer()
+        public GameState connectToServer()
         {
             switch (gameStateOnServer.connection)
             {
@@ -57,46 +56,72 @@ namespace Server
                     break;
                 case ConnectionState.RED_CONNECTED:
                     gameStateOnServer.connection = ConnectionState.BLUE_CONNECTED;
-                    fromServer_StateUpdateEvent?.Invoke(gameStateOnServer);
                     break;
                 case ConnectionState.NOT_CONNECTED:
                     gameStateOnServer.connection = ConnectionState.RED_CONNECTED;
-                    fromServer_StateUpdateEvent?.Invoke(gameStateOnServer);
                     break;
             }
-        }
 
-        public void makeMove(int columnId, int selected)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void simulateNextMove()
-        {
-            throw new NotImplementedException();
+            return gameStateOnServer;
         }
 
         [OneWay]
-        public void startNewGame()
+        public GameState simulateNextMove()
         {
-            List<PencilColumn> columns = getRandomPencilColumns();
-            gameStateOnServer = new GameState(columns, Player.BLUE, false, ConnectionState.NOT_CONNECTED);
-            fromServer_StateUpdateEvent?.Invoke(this.gameStateOnServer);
+            Random rand = new Random();
+
+            int index = -1;
+
+            do {
+
+                var columnIndex = rand.Next(0, gameStateOnServer.columns.Length - 1);
+                if (gameStateOnServer.columns[columnIndex].getAvailable() > 0) index = columnIndex;
+
+            } while (index == -1);
+
+            int amount = rand.Next(0, gameStateOnServer.columns[index].getAvailable());
+
+            return makeMove(index, amount, Player.RED);
+        }
+
+        [OneWay]
+        public GameState startNewGame(int columnsCount)
+        {
+            List<PencilColumn> columns = getRandomPencilColumns(columnsCount);
+            gameStateOnServer = new GameState(columns.ToArray(), Player.BLUE, false, ConnectionState.NOT_CONNECTED);
+
+            return gameStateOnServer;
         }
 
         Random random = new Random();
 
-        private List<PencilColumn> getRandomPencilColumns()
+        private List<PencilColumn> getRandomPencilColumns(int columnsCount)
         {
             List<PencilColumn> result = new List<PencilColumn>();
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < columnsCount; i++)
             {
                 int value = random.Next(11) + 1;
                 result.Add(new PencilColumn(value));
             }
 
             return result;
+        }
+
+        [OneWay]
+        public GameState makeMove(int columnId, int selected, Player currentPlayer)
+        {
+
+            for (int i = 0, j = 0; j < selected; i++)
+            {
+                if (gameStateOnServer.columns[columnId].pencils[i] == PencilColor.GREY)
+                {
+                    gameStateOnServer.columns[columnId].pencils[i] = currentPlayer == Player.BLUE ? PencilColor.BLUE : PencilColor.RED;
+                    j++;
+                }
+            }
+
+            return gameStateOnServer;
         }
     }
 }

@@ -14,12 +14,10 @@ namespace Common
 
     public interface IGameServer
     {
-        event delegateFromServer_StateUpdate fromServer_StateUpdateEvent;
-
-        void connectToServer();
-        void startNewGame();
-        void makeMove(int columnId, int selected);
-        void simulateNextMove();
+        GameState connectToServer();
+        GameState startNewGame(int columns);
+        GameState makeMove(int columnId, int selected, Player currentPlayer);
+        GameState simulateNextMove();
     }
 
     [Serializable]
@@ -27,11 +25,11 @@ namespace Common
     {
         public ConnectionState connection;
 
-        public List<PencilColumn> columns;
+        public PencilColumn[] columns;
         public Player currentPlayer;
         public bool finish;
 
-        public GameState (List<PencilColumn> columns, Player currentPlayer, bool finish, ConnectionState connection)
+        public GameState (PencilColumn[] columns, Player currentPlayer, bool finish, ConnectionState connection)
         {
             this.columns = columns;
             this.currentPlayer = currentPlayer;
@@ -53,13 +51,14 @@ namespace Common
         GREY
     }
 
+    [Serializable]
     public class PencilColumn {
 
-        public List<PencilColor> pencils;
+        public PencilColor[] pencils;
 
         public int getAvailable()
         {
-            return pencils == null ? 0 : pencils.FindAll(p => p == PencilColor.GREY).Count;
+            return pencils == null ? 0 : new System.Collections.Generic.List<PencilColor>(pencils).FindAll(p => p == PencilColor.GREY).Count;
         }
 
         public PencilColumn(int count)
@@ -71,7 +70,7 @@ namespace Common
                 pencils.Add(PencilColor.GREY);
             }
 
-            this.pencils = pencils;
+            this.pencils = pencils.ToArray();
         }
     }
 }

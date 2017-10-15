@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Red_Green_Blue_Transport_UserControls", "Red_Green_Blue_Transport_UserControls\Red_Green_Blue_Transport_UserControls.csproj", "{131ABD1C-2BF6-46B8-8583-FE2DFC75E4CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{131ABD1C-2BF6-46B8-8583-FE2DFC75E4CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{131ABD1C-2BF6-46B8-8583-FE2DFC75E4CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{131ABD1C-2BF6-46B8-8583-FE2DFC75E4CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{131ABD1C-2BF6-46B8-8583-FE2DFC75E4CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
